@@ -7,11 +7,16 @@
 
 import Foundation
 
+struct PageResponse<T> {
+    let items: [T]
+    let hasMore: Bool
+}
+
 protocol FeedRepository {
 
-    func loadFirstPage() async throws -> [Post]
+    func loadFirstPage() async throws -> PageResponse<Post>
 
-    func loadNextPage() async throws -> [Post]
+    func loadNextPage() async throws -> PageResponse<Post>
 
-    func refresh() async throws -> [Post]
+    func refresh() async throws -> PageResponse<Post>
 }

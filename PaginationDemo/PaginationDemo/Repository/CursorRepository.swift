@@ -1,5 +1,5 @@
 //
-//  OffsetRepository.swift
+//  CursorRepository.swift
 //  PaginationDemo
 //
 //  Created by Habibur_Rahman on 18/7/26.
@@ -7,25 +7,25 @@
 
 import Foundation
 
-final class OffsetRepository: FeedRepository {
+final class CursorRepository: FeedRepository {
 
     private let api = FakeAPI()
 
     private let pageSize = 20
 
-    private var currentPage = 0
+    private var nextCursor: Int = 0
 
     func loadFirstPage() async throws -> PageResponse<Post> {
 
-        currentPage = 0
+        nextCursor = 0
 
-        return try await loadPage()
+        return try await load()
 
     }
 
     func loadNextPage() async throws -> PageResponse<Post> {
 
-        return try await loadPage()
+        return try await load()
 
     }
 
@@ -35,13 +35,11 @@ final class OffsetRepository: FeedRepository {
 
     }
 
-    private func loadPage() async throws -> PageResponse<Post> {
+    private func load() async throws -> PageResponse<Post> {
 
         let posts = try await api.fetchPosts()
 
-        let start = currentPage * pageSize
-
-        guard start < posts.count else {
+        guard nextCursor < posts.count else {
 
             return PageResponse(
                 items: [],
@@ -50,11 +48,14 @@ final class OffsetRepository: FeedRepository {
 
         }
 
-        let end = min(start + pageSize, posts.count)
+        let end = min(
+            nextCursor + pageSize,
+            posts.count
+        )
 
-        let page = Array(posts[start..<end])
+        let page = Array(posts[nextCursor..<end])
 
-        currentPage += 1
+        nextCursor = end
 
         return PageResponse(
             items: page,

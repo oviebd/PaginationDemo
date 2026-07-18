@@ -10,30 +10,74 @@ import SwiftUI
 struct FeedView: View {
 
     @StateObject
-    private var viewModel = FeedViewModel(
-        repository: OffsetRepository()
-    )
+    private var viewModel: FeedViewModel
+
+    init(repository: FeedRepository) {
+
+        _viewModel = StateObject(
+            wrappedValue: FeedViewModel(
+                repository: repository
+            )
+        )
+
+    }
 
     var body: some View {
 
-        List(viewModel.posts) { post in
+        List {
 
-            PostRowView(post: post)
-        }
-        .navigationTitle("Offset Pagination")
-        .overlay {
+            ForEach(viewModel.posts) { post in
 
-            if viewModel.isLoading &&
-                viewModel.posts.isEmpty {
+                PostRowView(post: post)
 
-                ProgressView()
+                    .onAppear {
+
+                        if post.id == viewModel.posts.last?.id {
+
+                            Task {
+
+                                await viewModel.loadNextPage()
+
+                            }
+
+                        }
+
+                    }
+
+            }
+
+            if viewModel.hasMore {
+
+                HStack {
+
+                    Spacer()
+
+                    ProgressView()
+
+                    Spacer()
+
+                }
+
+                .listRowSeparator(.hidden)
+
             }
 
         }
+
+        .navigationTitle("Posts")
+
         .task {
 
             await viewModel.load()
 
         }
+
+        .refreshable {
+
+            await viewModel.refresh()
+
+        }
+
     }
+
 }

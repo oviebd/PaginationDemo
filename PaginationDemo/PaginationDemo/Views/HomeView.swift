@@ -17,13 +17,26 @@ struct HomeView: View {
 
                 NavigationLink("Offset Pagination") {
 
-                    FeedView()
+                    FeedView(
+                        repository: OffsetRepository()
+                    )
+
+                }
+
+                NavigationLink("Cursor Pagination") {
+
+                    FeedView(
+                        repository: CursorRepository()
+                    )
 
                 }
 
             }
+
             .navigationTitle("Pagination Lab")
 
         }
+
     }
+
 }

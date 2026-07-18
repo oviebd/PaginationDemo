@@ -12,32 +12,18 @@ final class FakeAPI {
     private let posts: [Post]
 
     init() {
-
         do {
-            posts = try JSONLoader.load(
-                "posts",
-                as: [Post].self
-            )
+            self.posts = try JSONLoader.load("posts",as: [Post].self)
         } catch {
-            fatalError(error.localizedDescription)
+            fatalError("Failed to load posts.json: \(error)")
         }
     }
 
-    func fetchPosts(
-        page: Int,
-        limit: Int
-    ) async throws -> [Post] {
+    /// Simulates a backend request and returns all posts.
+    func fetchPosts() async throws -> [Post] {
 
-        await DelaySimulator.randomDelay()
+        await DelaySimulator.simulate()
 
-        let start = (page - 1) * limit
-
-        guard start < posts.count else {
-            return []
-        }
-
-        let end = min(start + limit, posts.count)
-
-        return Array(posts[start..<end])
+        return posts
     }
 }

@@ -9,7 +9,7 @@ import Foundation
 
 enum DelaySimulator {
 
-    static func randomDelay() async {
+    static func simulate() async {
 
         let seconds = Double.random(in: 0.5...2.0)
 

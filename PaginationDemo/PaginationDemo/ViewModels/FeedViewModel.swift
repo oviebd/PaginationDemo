@@ -11,16 +11,22 @@ import Combine
 @MainActor
 final class FeedViewModel: ObservableObject {
 
-    @Published var posts: [Post] = []
+    @Published private(set) var posts: [Post] = []
 
-    @Published var isLoading = false
+    @Published private(set) var isLoading = false
+
+    @Published private(set) var hasMore = true
 
     @Published var errorMessage: String?
+
+    private var isLoadingNextPage = false
 
     private let repository: FeedRepository
 
     init(repository: FeedRepository) {
+
         self.repository = repository
+
     }
 
     func load() async {
@@ -28,56 +34,75 @@ final class FeedViewModel: ObservableObject {
         guard posts.isEmpty else { return }
 
         isLoading = true
-        errorMessage = nil
 
         defer {
+
             isLoading = false
+
         }
 
         do {
 
-            posts = try await repository.loadFirstPage()
+            let response = try await repository.loadFirstPage()
+
+            posts = response.items
+
+            hasMore = response.hasMore
 
         } catch {
 
             errorMessage = error.localizedDescription
 
         }
+
     }
 
     func loadNextPage() async {
 
-        guard !isLoading else { return }
+        guard hasMore else { return }
 
-        isLoading = true
+        guard !isLoadingNextPage else { return }
+
+        isLoadingNextPage = true
 
         defer {
-            isLoading = false
+
+            isLoadingNextPage = false
+
         }
 
         do {
 
-            let newPosts = try await repository.loadNextPage()
+            let response = try await repository.loadNextPage()
 
-            posts.append(contentsOf: newPosts)
+            posts.append(contentsOf: response.items)
+
+            hasMore = response.hasMore
 
         } catch {
 
             errorMessage = error.localizedDescription
 
         }
+
     }
 
     func refresh() async {
 
         do {
 
-            posts = try await repository.refresh()
+            let response = try await repository.refresh()
+
+            posts = response.items
+
+            hasMore = response.hasMore
 
         } catch {
 
             errorMessage = error.localizedDescription
 
         }
+
     }
+
 }
