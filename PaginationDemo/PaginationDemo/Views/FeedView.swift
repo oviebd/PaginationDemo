@@ -12,12 +12,10 @@ struct FeedView: View {
     @StateObject
     private var viewModel: FeedViewModel
 
-    init(repository: FeedRepository) {
+    init(container: AppContainer) {
 
         _viewModel = StateObject(
-            wrappedValue: FeedViewModel(
-                repository: repository
-            )
+            wrappedValue: container.makeFeedViewModel()
         )
 
     }
@@ -29,16 +27,17 @@ struct FeedView: View {
             ForEach(viewModel.posts) { post in
 
                 PostRowView(post: post)
-
                     .onAppear {
 
-                        if post.id == viewModel.posts.last?.id {
+                        guard post.id == viewModel.posts.last?.id else {
 
-                            Task {
+                            return
 
-                                await viewModel.loadNextPage()
+                        }
 
-                            }
+                        Task {
+
+                            await viewModel.loadNextPage()
 
                         }
 

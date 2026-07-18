@@ -18,7 +18,9 @@ struct HomeView: View {
                 NavigationLink("Offset Pagination") {
 
                     FeedView(
-                        repository: OffsetRepository()
+                        container: AppContainer(
+                            paginationType: .offset
+                        )
                     )
 
                 }
@@ -26,7 +28,9 @@ struct HomeView: View {
                 NavigationLink("Cursor Pagination") {
 
                     FeedView(
-                        repository: CursorRepository()
+                        container: AppContainer(
+                            paginationType: .cursor
+                        )
                     )
 
                 }
