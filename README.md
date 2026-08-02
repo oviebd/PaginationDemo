@@ -172,7 +172,7 @@ The fake API always returns the full dataset; repositories slice windows locally
 Series by [Habibur Rahman](https://habiburrahmanovie.com):
 
 1. [Part 1 — Theory & trade-offs](https://habiburrahmanovie.com/blog/pagination_isn_t_about_loading_more_data_it_s_about_designing_systems_that_scale_part_1)
-2. [Part 2 — Architecture walkthrough](./PaginationDemo/docs/part-2-pagination-architecture.md) (also on the blog)
+2. [Part 2 — Architecture walkthrough](https://habiburrahmanovie.com/blog/pagination_isn_t_about_loading_more_data_it_s_about_designing_systems_that_scale_part_2) (also on the blog)
 
 ---
 
